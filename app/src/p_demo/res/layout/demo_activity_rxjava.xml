@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.dgk.demo.DemoActivity">
+
+    <Button
+        android:id="@+id/btn_test_01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Test_01"/>
+
+    <Button
+        android:id="@+id/btn_test_02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Test_02"/>
+
+    <Button
+        android:id="@+id/btn_test_03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Test_03"/>
+
+    <Button
+        android:id="@+id/btn_test_04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Test_04"/>
+
+    <Button
+        android:id="@+id/btn_test_05"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Test_05"/>
+
+    <Button
+        android:id="@+id/btn_test_06"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Test_06"/>
+
+</LinearLayout>

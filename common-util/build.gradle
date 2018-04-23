@@ -1,0 +1,73 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            postprocessing {
+                removeUnusedCode false
+                removeUnusedResources false
+                obfuscate false
+                optimizeCode false
+                proguardFile 'proguard-rules.pro'
+            }
+        }
+    }
+
+}
+
+// Java和Kotlin混合工程打Jar包，依赖生成编译release代码，打包类型Jar
+task makeJar(dependsOn: ['compileReleaseJavaWithJavac'], type: Jar) {
+    // 清空原有的jar
+    delete('build/libs')
+
+    // 命名
+//    baseName "CommonUtil"
+//    appendix new SimpleDateFormat("yyyyMMddHHmm").format(new Date())    // 前缀
+//    version android.defaultConfig.versionName   // 版本
+//    classifier "release"
+//    extension "jar"   //后缀名
+
+    // 最终的Jar包名，如果没设置，默认为 [baseName]-[appendix]-[version]-[classifier].[extension]
+    archiveName "CommonUtil_${android.defaultConfig.versionName}_" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + "_release.jar"
+
+    // 需打包的资源所在的路径集
+    def kotlinSrcClassesDir = [project.buildDir.absolutePath + "/tmp/kotlin-classes/release"]
+    // Kotlin生成的classes文件路径
+    def javaSrcClassesDir = [project.buildDir.absolutePath + "/intermediates/classes/release"]
+    // Java生成的classes文件路径
+    // 初始化资源路径集，即需要打包的代码
+    from kotlinSrcClassesDir, javaSrcClassesDir
+
+    // Jar包保存路径，默认保存在build/libs
+    into('build/libs')
+
+    // 去除路径集下部分资源，比如R文件
+    exclude("BuildConfig.class")
+    exclude("**/R.class")
+    exclude("**/R\$*.class")
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
