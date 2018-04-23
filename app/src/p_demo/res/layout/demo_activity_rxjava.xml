@@ -8,45 +8,60 @@
     tools:context="com.dgk.demo.DemoActivity">
 
     <Button
-        android:id="@+id/btn_test_01"
+        android:id="@+id/btn_test_demo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Test_01"/>
+        android:text="Demo"/>
 
     <Button
-        android:id="@+id/btn_test_02"
+        android:id="@+id/btn_test_exception"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Test_02"/>
+        android:text="异常"/>
 
     <Button
-        android:id="@+id/btn_test_03"
+        android:id="@+id/btn_test_concat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Test_03"/>
+        android:text="concat"/>
+
 
     <Button
-        android:id="@+id/btn_test_04"
+        android:id="@+id/btn_test_zip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Test_04"/>
+        android:text="zip"/>
 
     <Button
-        android:id="@+id/btn_test_05"
+        android:id="@+id/btn_test_map"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Test_05"/>
+        android:text="map"/>
 
     <Button
-        android:id="@+id/btn_test_06"
+        android:id="@+id/btn_test_flatmap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAllCaps="false"
-        android:text="Test_06"/>
+        android:text="flatMap"/>
+
+    <Button
+        android:id="@+id/btn_test_concatmap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="concatMap"/>
+
+    <Button
+        android:id="@+id/btn_test_interval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="interval"/>
 
 </LinearLayout>

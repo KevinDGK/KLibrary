@@ -23,6 +23,7 @@ import io.reactivex.ObservableSource
 import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.functions.BiFunction
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -34,35 +35,55 @@ import io.reactivex.functions.BiFunction
  * 1. Observable - Observer（不支持背压）
  * 2. Flowable - Subscriber（支持背压）
  *
+ *
+ * 资源：
+ * - 源码是最好的老师；
+ * - RxJava 2.x 中文Demo：https://github.com/nanchen2251/RxJava2Examples
+ * - RxJava GitHub：https://github.com/ReactiveX/RxJava
+ *
  * Created by daigaokai on 2018/4/16.
  */
 class RxJavaActivity : AppCompatActivity() {
+
+    /**
+     * 在界面关闭、获取数据成功、或者达到一定次数和时间之后就需要取消轮询，否则界面关闭后线程仍然在执行，容易造成崩溃。
+     */
+    var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.demo_activity_rxjava)
 
-        btn_test_01.setOnClickListener {
-            rxJavaTest01()
+        btn_test_demo.setOnClickListener {
+            rxJavaTestDemo()
         }
-        btn_test_02.setOnClickListener {
-            rxJavaTest02()
+        btn_test_exception.setOnClickListener {
+            rxJavaTestException()
         }
-        btn_test_03.setOnClickListener {
-            rxJavaTest03()
-        }
-
-        btn_test_04.setOnClickListener {
-            rxJavaTest04()
+        btn_test_concat.setOnClickListener {
+            rxJavaTestConcat()
         }
 
-        btn_test_05.setOnClickListener {
-            rxJavaTest05()
+        btn_test_zip.setOnClickListener {
+            rxJavaTestZip()
         }
 
-        btn_test_06.setOnClickListener {
-            rxJavaTest06()
+        btn_test_map.setOnClickListener {
+            rxJavaTestMap()
         }
+
+        btn_test_flatmap.setOnClickListener {
+            rxJavaTestFlatMap()
+        }
+
+        btn_test_concatmap.setOnClickListener {
+            rxJavaTestConcatMap()
+        }
+
+        btn_test_interval.setOnClickListener {
+            rxJavaTestInterval()
+        }
+
 
         // 设置RxJava全局的ErrorHandler，来接收Rxjava中onXXX()抛出的未捕捉的异常，详见RxJavaPlugins.onError()方法。
         RxJavaPlugins.setErrorHandler(object : Consumer<Throwable> {
@@ -74,14 +95,25 @@ class RxJavaActivity : AppCompatActivity() {
         })
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        /*
+            当界面关闭的时候，一定要将一些耗时较长、轮询等被观察者取消订阅，
+            否则，当界面关闭后，有可能还在发射事件，并走到了观察者的onNext()方法中，
+            容易造成崩溃或者内存泄漏。
+          */
+        disposable?.dispose()
+    }
+
     /**
      * 基本使用
      * 第一步：创建被观察者Observable
      * 第二步：创建观察者Observer
      * 第三部：建立订阅关系
      */
-    private fun rxJavaTest01() {
-        println("====== rxJavaTest01 ======")
+    private fun rxJavaTestDemo() {
+        println("====== rxJavaTestDemo ======")
 
         var disposable: Disposable? = null
 
@@ -132,10 +164,255 @@ class RxJavaActivity : AppCompatActivity() {
     }
 
     /**
-     * 使用场景：网络请求，解析响应数据，根据结果刷新UI
+     * RxJava异常
      */
-    private fun rxJavaTest02() {
-        println("====== rxJavaTest02 ======")
+    private fun rxJavaTestException() {
+        println("====== rxJavaTestException ======")
+
+        Observable.create(object : ObservableOnSubscribe<Int> {
+            override fun subscribe(emitter: ObservableEmitter<Int>) {
+
+                for (i in 1..5) {
+                    println("emitter.onNext($i)")
+                    emitter.onNext(i)
+                    Thread.sleep(2000)
+                }
+
+                // 直接抛出onError事件，可以在Observer的onError()中处理
+//                emitter.onError(NullPointerException("There is a null param!!!"))
+
+                emitter.onNext(10)
+                emitter.onComplete()
+            }
+        }).map {
+            println("map, value=$it")
+            if (it >= 3) {
+
+                /*
+                    在此处抛出的异常会被传送到Scheduler或者Executor，
+                    或者路由到Rxjavaplugins #onError() 或者 Thread.UncaughtExceptionHandler#uncaughtException(Thread, Throwable)的handler进行处理。
+                    所以不一定会导致崩溃。
+                 */
+
+                // RxJava抛异常的方法，异常类型为RuntimeException
+//                Exceptions.propagate(NullPointerException("RxJava: There is a null param!!!"))
+
+                // Kotlin抛出异常的方法，异常类型为IllegalStateException，RuntimeException的子类
+//                error("Kotlin: There is a null param!!!")
+            }
+            return@map it * it
+        }.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<Int> {
+                    override fun onComplete() {
+                        println("Observer: onComplete")
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+                        println("Observer: onSubscribe")
+                    }
+
+                    override fun onNext(t: Int) {
+                        println("Observer: onNext, value=$t")
+                        /*
+                            在onXXX()中抛出异常：
+                            - 如果设置了RxJava全局的异常处理的handler，即RxJavaPlugins.setErrorHandler()，那么在此处抛出的异常会送到RxJavaPlugins.onError()方法处理；
+                            - 如果没有设置，就会直接抛给该线程或者线程组，如果该线程没有设置处理异常的Handler，即defaultUncaughtExceptionHandler，那么就会造成程序崩溃。
+                         */
+                        if (t >= 9) {
+                            error("Kotlin: There is a null param!!!")
+                        }
+                    }
+
+                    override fun onError(e: Throwable) {
+                        println("Observer: onError")
+                        e.printStackTrace()
+                    }
+                })
+    }
+
+    /**
+     * concat: 连接发射器
+     * - 依次轮流发射数据，并且只有前一个调用了onComplete()后一个才会执行
+     */
+    private fun rxJavaTestConcat() {
+        println("====== rxJavaTestConcat ======")
+
+        // 例1. 简单使用，会连接两个被观察者，被观察者1发射完数据后，被观察者2就会继续发射数据
+        Observable.concat(Observable.just(1, 2, 3), Observable.just(4, 5, 6))
+                .subscribe(object : Consumer<Int> {
+                    override fun accept(t: Int?) {
+                        println("accept, t=$t")
+                    }
+                })
+
+        // 例2. 模拟先从缓存中读取数据，如果缓存没有再进行网络请求，向服务器获取数据
+
+        // source1: 模拟从内存中获取
+        val source1 = Observable.create(object : ObservableOnSubscribe<String> {
+            override fun subscribe(emitter: ObservableEmitter<String>) {
+                println("ObservableSource1 Thread: ${Thread.currentThread()}")
+
+                var data = "data from cache"
+
+                if (data.isNullOrEmpty()) {
+                    /*
+                        如果缓存中没有我们要的数据，则直接调用onComplete()，
+                        此时会触发下一个Observable的subscribe
+                     */
+                    emitter.onComplete()
+                } else {
+                    /*
+                        如果缓存中有我们要的数据，就不再进行网络请求，直接调用onNext()
+                        然后在onNext()中处理数据。取消订阅
+                     */
+                    emitter.onNext(data)
+                }
+            }
+        })
+
+        // source2: 模拟从内存中获取
+        val source2 = Observable.create(object : ObservableOnSubscribe<String> {
+            override fun subscribe(emitter: ObservableEmitter<String>) {
+                println("ObservableSource2 Thread: ${Thread.currentThread()}")
+
+                var data = "data from net"
+
+                emitter.onNext(data)
+                emitter.onComplete()
+            }
+        })
+
+        var disposable: Disposable? = null
+
+        //
+        Observable.concat(source1, source2)
+                .map {
+                    println("Map Thread: ${Thread.currentThread()}")
+                    println("map: it=$it")
+                    return@map it
+                }.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<String> {
+                    override fun onComplete() {
+                        println("Observer: onComplete")
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+                        println("Observer: onSubscribe")
+                        disposable = d
+                    }
+
+                    override fun onNext(t: String) {
+                        println("Observer: onNext, value=$t, Thread=${Thread.currentThread()})")
+                        disposable?.dispose()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        println("Observer: onError")
+                        e.printStackTrace()
+                    }
+                })
+    }
+
+    /**
+     * zip：合并发射器
+     * - 合并Observable发射的数据，通过BiFunction()组合起来，再发射出去。最终发射数量以最少的为准。
+     */
+    private fun rxJavaTestZip() {
+
+        println("====== rxJavaTestZip ======")
+
+        /*
+            例1.简单使用，会依次将两个被观察者发射的事件两两合并，然后发射出去，没有配对的数据不会发射。
+            输出数据应该是 1A 2B 3C，由于4和5没有配对数据，所以不会再次发射。
+         */
+        val source1 = Observable.create(object : ObservableOnSubscribe<Int> {
+            override fun subscribe(emitter: ObservableEmitter<Int>) {
+                emitter.onNext(1)
+                emitter.onNext(2)
+                emitter.onNext(3)
+                emitter.onNext(4)
+                emitter.onNext(5)
+            }
+        })
+        val source2 = Observable.create(object : ObservableOnSubscribe<String> {
+            override fun subscribe(emitter: ObservableEmitter<String>) {
+                emitter.onNext("A")
+                emitter.onNext("B")
+                emitter.onNext("C")
+            }
+        })
+        Observable.zip(source1, source2, object : BiFunction<Int, String, String> {
+            override fun apply(t1: Int, t2: String): String {
+                return "$t1$t2"
+            }
+        }).subscribe(object : Consumer<String> {
+            override fun accept(t: String?) {
+                println("accept: $t")
+            }
+        })
+
+        /*
+            例2.实际应用，连续进行多个网络请求获取数据，然后统一刷新UI。
+         */
+
+        // 模拟网络请求1
+        val source3 = Observable.create(object : ObservableOnSubscribe<String> {
+            override fun subscribe(emitter: ObservableEmitter<String>) {
+                println("source1: subscribe")
+                Thread.sleep(3000)
+                println("source1: emitter")
+                emitter.onNext("Kevin")
+                emitter.onComplete()
+            }
+        })
+
+        // 模拟网络请求2
+        val source4 = Observable.create(object : ObservableOnSubscribe<Int> {
+            override fun subscribe(emitter: ObservableEmitter<Int>) {
+                println("source2: subscribe")
+                Thread.sleep(5000)
+                println("source2: emitter")
+                emitter.onNext(18)
+                emitter.onComplete()
+            }
+        })
+
+        // 合并两个网络请求的结果，转为String向下发送
+        Observable.zip(source3, source4, object : BiFunction<String, Int, String> {
+            override fun apply(t1: String, t2: Int): String {
+                println("zip: apply")
+                return "$t1 is $t2 years old!"
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<String> {
+                    override fun onComplete() {
+                        println("Observer: onComplete")
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+                        println("Observer: onSubscribe")
+                    }
+
+                    override fun onNext(t: String) {
+                        println("Observer: onNext, value=$t")
+                    }
+
+                    override fun onError(e: Throwable) {
+                        println("Observer: onError")
+                        e.printStackTrace()
+                    }
+                })
+    }
+
+    /**
+     * Map 数据变换
+     * - 使用场景：网络请求，解析响应数据，根据结果刷新UI
+     */
+    private fun rxJavaTestMap() {
+        println("====== rxJavaTestMap ======")
 
         Observable.create(object : ObservableOnSubscribe<String> {
             override fun subscribe(emitter: ObservableEmitter<String>) {
@@ -203,122 +480,126 @@ class RxJavaActivity : AppCompatActivity() {
     }
 
     /**
-     * RxJava异常
+     * flatMap 基本使用
+     * - 展开流：对Observable发射的数据流进行变换操作，然后再发射出去
      */
-    private fun rxJavaTest03() {
-        println("====== rxJavaTest03 ======")
+    private fun rxJavaTestFlatMap() {
 
+        println("====== rxJavaTestFlatMap ======")
+
+        /*
+           例1.简单使用，可以将ObservableA转换成ObservableB，无序
+           输出:
+             The value is 0
+             The value is 1
+             The value is 5
+             The value is 3
+             The value is 4
+             The value is 2
+        */
         Observable.create(object : ObservableOnSubscribe<Int> {
             override fun subscribe(emitter: ObservableEmitter<Int>) {
-
-                for (i in 1..5) {
-                    println("emitter.onNext($i)")
+                for (i in 0..5) {
                     emitter.onNext(i)
-                    Thread.sleep(2000)
                 }
-
-                // 直接抛出onError事件，可以在Observer的onError()中处理
-//                emitter.onError(NullPointerException("There is a null param!!!"))
-
-                emitter.onNext(10)
                 emitter.onComplete()
             }
-        }).map {
-            println("map, value=$it")
-            if (it >= 3) {
-
-                /*
-                    在此处抛出的异常会被传送到Scheduler或者Executor，
-                    或者路由到Rxjavaplugins #onError() 或者 Thread.UncaughtExceptionHandler#uncaughtException(Thread, Throwable)的handler进行处理。
-                    所以不一定会导致崩溃。
-                 */
-
-                // RxJava抛异常的方法，异常类型为RuntimeException
-//                Exceptions.propagate(NullPointerException("RxJava: There is a null param!!!"))
-
-                // Kotlin抛出异常的方法，异常类型为IllegalStateException，RuntimeException的子类
-//                error("Kotlin: There is a null param!!!")
+        }).flatMap(object : Function<Int, ObservableSource<String>> {
+            override fun apply(t: Int): ObservableSource<String> {
+                // 将Int转换成String，增加延迟，方便明显的看出无序
+                return Observable.just("The value is $t").delay(Math.round(1000 * Math.random()), TimeUnit.MILLISECONDS)
             }
-            return@map it * it
-        }.subscribeOn(Schedulers.newThread())
+        }).subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<Int> {
-                    override fun onComplete() {
-                        println("Observer: onComplete")
+                .subscribe(object : Consumer<String> {
+                    override fun accept(t: String?) {
+                        println("accept: $t")
                     }
+                })
+    }
 
-                    override fun onSubscribe(d: Disposable) {
-                        println("Observer: onSubscribe")
-                    }
 
-                    override fun onNext(t: Int) {
-                        println("Observer: onNext, value=$t")
-                        /*
-                            在onXXX()中抛出异常：
-                            - 如果设置了RxJava全局的异常处理的handler，即RxJavaPlugins.setErrorHandler()，那么在此处抛出的异常会送到RxJavaPlugins.onError()方法处理；
-                            - 如果没有设置，就会直接抛给该线程或者线程组，如果该线程没有设置处理异常的Handler，即defaultUncaughtExceptionHandler，那么就会造成程序崩溃。
-                         */
-                        if (t >= 9) {
-                            error("Kotlin: There is a null param!!!")
-                        }
-                    }
+    /**
+     * concatMap
+     * - 和flatMap唯一的区别就是有序的
+     */
+    private fun rxJavaTestConcatMap() {
 
-                    override fun onError(e: Throwable) {
-                        println("Observer: onError")
-                        e.printStackTrace()
+        println("====== rxJavaTestConcatMap ======")
+
+        /*
+           例1.简单使用，可以将ObservableA转换成ObservableB，有序
+           输出:
+             The value is 0
+             The value is 1
+             The value is 2
+             The value is 3
+             The value is 4
+             The value is 5
+        */
+        Observable.create(object : ObservableOnSubscribe<Int> {
+            override fun subscribe(emitter: ObservableEmitter<Int>) {
+                for (i in 0..5) {
+                    emitter.onNext(i)
+                }
+                emitter.onComplete()
+            }
+        }).concatMap(object : Function<Int, ObservableSource<String>> {
+            override fun apply(t: Int): ObservableSource<String> {
+                // 将Int转换成String，增加延迟，方便明显的看出无序
+                return Observable.just("The value is $t").delay(Math.round(1000 * Math.random()), TimeUnit.MILLISECONDS)
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Consumer<String> {
+                    override fun accept(t: String?) {
+                        println("accept: $t")
                     }
                 })
     }
 
     /**
-     * concat 依次轮流发射数据，并且只有前一个调用了onComplete()后一个才会执行
+     * interval
+     * - 轮询等心跳间隔任务
      */
-    private fun rxJavaTest04() {
-        println("====== rxJavaTest04 ======")
+    private fun rxJavaTestInterval() {
 
-        // source1: 模拟从内存中获取
-        val source1 = Observable.create(object : ObservableOnSubscribe<String> {
+        println("====== rxJavaTestInterval ======")
+
+        // 模拟网络请求获取数据
+        val getDataFromServer = Observable.create(object : ObservableOnSubscribe<String> {
             override fun subscribe(emitter: ObservableEmitter<String>) {
-                println("ObservableSource1 Thread: ${Thread.currentThread()}")
+                println("Observable: subscribe, 进行网络请求")
 
-                var data = "data from cache"
+                val URL_GET = "http://192.168.0.105:8080/mydemo/test/get"
 
-                if (data.isNullOrEmpty()) {
-                    /*
-                        如果缓存中没有我们要的数据，则直接调用onComplete()，
-                        此时会触发下一个Observable的subscribe
-                     */
-                    emitter.onComplete()
-                } else {
-                    /*
-                        如果缓存中有我们要的数据，就不再进行网络请求，直接调用onNext()
-                        然后在onNext()中处理数据。取消订阅
-                     */
-                    emitter.onNext(data)
-                }
+                OkHttpUtil.getAsync(URL_GET, object : Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        println("onFailure: $e")
+                        emitter.onError(Exception("onFailure: ${e?.message ?: "null"}"))
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        val result = response?.body()?.string()
+                        println("onResponse: response.body = $result")
+                        if (result.isNullOrEmpty()) {
+                            emitter.tryOnError(Exception("onFailure: 返回数据为空"))
+                        } else {
+                            emitter.onNext(result!!)
+                        }
+                    }
+                })
             }
         })
 
-        // source2: 模拟从内存中获取
-        val source2 = Observable.create(object : ObservableOnSubscribe<String> {
-            override fun subscribe(emitter: ObservableEmitter<String>) {
-                println("ObservableSource2 Thread: ${Thread.currentThread()}")
-
-                var data = "data from net"
-
-                emitter.onNext(data)
-                emitter.onComplete()
-            }
-        })
-
-        var disposable: Disposable? = null
-
-        Observable.concat(source1, source2)
-                .map {
-                    println("Map Thread: ${Thread.currentThread()}")
-                    println("map: it=$it")
-                    return@map it
-                }.subscribeOn(Schedulers.newThread())
+        // 每隔2s轮询一次，对于这种重复执行的任务一定要在适当的时候结束掉(达到一定次数、时间或者关闭界面的时候)，否则会造成内存泄漏和崩溃。
+        Observable.interval(2, TimeUnit.SECONDS)
+                .flatMap(object : Function<Long, ObservableSource<String>> {
+                    override fun apply(t: Long): ObservableSource<String> {
+                        println("apply, t=$t")
+                        return getDataFromServer
+                    }
+                }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<String> {
                     override fun onComplete() {
@@ -331,54 +612,6 @@ class RxJavaActivity : AppCompatActivity() {
                     }
 
                     override fun onNext(t: String) {
-                        println("Observer: onNext, value=$t, Thread=${Thread.currentThread()})")
-                        disposable?.dispose()
-                    }
-
-                    override fun onError(e: Throwable) {
-                        println("Observer: onError")
-                        e.printStackTrace()
-                    }
-                })
-    }
-
-    /**
-     * flatMap 基本使用
-     * - 展开流：对Observable发射的数据流进行变换操作，然后再发射出去
-     */
-    private fun rxJavaTest05() {
-
-        Observable.create(object : ObservableOnSubscribe<Int> {
-            override fun subscribe(emitter: ObservableEmitter<Int>) {
-                for (i in 0..9) {
-//                    println("emitter.onNext(${i*3})")   // 发射 0, 3, 6, 9, 12
-                    emitter.onNext(i*3)
-//                    Thread.sleep(1000)
-                }
-                emitter.onComplete()
-            }
-        }).flatMap(object : Function<Int, ObservableSource<Int>>{
-            override fun apply(t: Int): ObservableSource<Int> {
-                return Observable.create {
-                    // 将t转换成t、t+1、t+2发射出去，即
-                    it.onNext(t)
-                    it.onNext(t + 1)
-                    it.onNext(t + 2)
-                    it.onComplete()
-                }
-            }
-        }).subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<Int> {
-                    override fun onComplete() {
-                        println("Observer: onComplete")
-                    }
-
-                    override fun onSubscribe(d: Disposable) {
-                        println("Observer: onSubscribe")
-                    }
-
-                    override fun onNext(t: Int) {
                         println("Observer: onNext, value=$t")
                     }
 
@@ -389,58 +622,4 @@ class RxJavaActivity : AppCompatActivity() {
                 })
     }
 
-    /**
-     * zip：依次执行Observable.subscribe()方法，并将发射的所有数据经过BiFunction()组合起来，再发射出去
-     */
-    private fun rxJavaTest06() {
-
-        // 模拟网络请求1
-        val source1 = Observable.create(object : ObservableOnSubscribe<String> {
-            override fun subscribe(emitter: ObservableEmitter<String>) {
-                println("source1: subscribe")
-                Thread.sleep(3000)
-                println("source1: emitter")
-                emitter.onNext("Kevin")
-                emitter.onComplete()
-            }
-        })
-
-        // 模拟网络请求2
-        val source2 = Observable.create(object : ObservableOnSubscribe<Int> {
-            override fun subscribe(emitter: ObservableEmitter<Int>) {
-                println("source2: subscribe")
-                Thread.sleep(5000)
-                println("source2: emitter")
-                emitter.onNext(18)
-                emitter.onComplete()
-            }
-        })
-
-        // 合并两个网络请求的结果，转为String向下发送
-        Observable.zip(source1, source2, object : BiFunction<String, Int, String>{
-            override fun apply(t1: String, t2: Int): String {
-                println("zip: apply")
-                return "$t1 is $t2 years old!"
-            }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : Observer<String> {
-                    override fun onComplete() {
-                        println("Observer: onComplete")
-                    }
-
-                    override fun onSubscribe(d: Disposable) {
-                        println("Observer: onSubscribe")
-                    }
-
-                    override fun onNext(t: String) {
-                        println("Observer: onNext, value=$t")
-                    }
-
-                    override fun onError(e: Throwable) {
-                        println("Observer: onError")
-                        e.printStackTrace()
-                    }
-                })
-    }
 }
