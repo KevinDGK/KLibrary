@@ -1,67 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.dgk.demo.DemoActivity">
 
-    <Button
-        android:id="@+id/btn_test_demo"
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:titleTextColor="@color/common_white"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="Demo"/>
+        android:overScrollMode="never"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <Button
-        android:id="@+id/btn_test_exception"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="异常"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_test_concat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="concat"/>
+            <Button
+                android:id="@+id/btn_test_demo"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Demo"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_exception"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="异常"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_concat"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="concat"
+                android:textAllCaps="false" />
 
 
-    <Button
-        android:id="@+id/btn_test_zip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="zip"/>
+            <Button
+                android:id="@+id/btn_test_zip"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="zip"
+                android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btn_test_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="map"/>
+            <Button
+                android:id="@+id/btn_test_map"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="map"
+                android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btn_test_flatmap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="flatMap"/>
+            <Button
+                android:id="@+id/btn_test_flatmap"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="flatMap"
+                android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btn_test_concatmap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="concatMap"/>
+            <Button
+                android:id="@+id/btn_test_concatmap"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="concatMap"
+                android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btn_test_interval"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:text="interval"/>
+            <Button
+                android:id="@+id/btn_test_interval"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="interval"
+                android:textAllCaps="false" />
 
-</LinearLayout>
+            <Button
+                android:id="@+id/btn_test_distinct"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="distinct"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_filter"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="filter"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_buffer"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="buffer"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_do_on_next"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="doOnNext"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_03"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="03"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_04"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="04"
+                android:textAllCaps="false" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 基础颜色 -->
+    <color name="common_white">#FFF</color>
+    <color name="common_black">#000</color>
+    <color name="common_red">#F00</color>
+
+</resources>

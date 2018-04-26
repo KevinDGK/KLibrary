@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.dgk.demo.DemoActivity">
 
     <Button
@@ -12,5 +13,19 @@
         android:layout_height="wrap_content"
         android:textAllCaps="false"
         android:text="Jump to RxJava"/>
+
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Jump to Test"/>
+
+    <Button
+        android:id="@+id/btn_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="Jump to Service"/>
 
 </LinearLayout>

@@ -31,7 +31,7 @@ android {
     sourceSets {
         main {
             manifest.srcFile('src/main/AndroidManifest.xml')
-            def dirs = ['main', 'p_demo', 'p_note', 'p_imitation']
+            def dirs = ['p_demo', 'p_note', 'p_imitation', 'main']
             dirs.each { dir ->
                 java.srcDir("src/$dir/java")
                 res.srcDir("src/$dir/res")
@@ -54,9 +54,13 @@ kapt {
 
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    // Android
     implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support:design:26.1.0'
+    // Test
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -76,4 +80,5 @@ dependencies {
     // 数据解析-FastJson
     implementation 'com.alibaba:fastjson:1.1.68.android'
     implementation project(':common-util')
+
 }
