@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.dgk.R
 import com.dgk.common.util.KLoge
 import com.dgk.common.util.KLogi
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.demo_activity_service.*
 /**
  * Created by daigaokai on 2018/4/26.
  */
+@Route(path = "/demo/service/ServiceActivity")
 class ServiceActivity : AppCompatActivity() {
 
     var serviceConnection:ServiceConnection ? = null

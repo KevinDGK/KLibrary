@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?android:actionBarSize"
+            android:background="@color/colorPrimary"
+            app:title="Bottom Sheet"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:titleTextColor="@color/common_white" />
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="底部动作条(Bottom Sheet)是一个从屏幕底部边缘向上滑出的一个面板，使用这种方式向用户呈现一组功能。" />
+
+        <Button
+            android:id="@+id/btn_bottom_sheet"
+            android:layout_width="wrap_content"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content"
+            android:text="Bottom Sheet制作" />
+    </LinearLayout>
+
+    <!-- 底部Bottom Sheet -->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="100dp"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:text="bottom_sheet_peek"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="center"
+            android:text="bottom_sheet_content"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

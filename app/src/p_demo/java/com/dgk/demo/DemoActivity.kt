@@ -1,14 +1,10 @@
 package com.dgk.demo
 
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.dgk.R
-import com.dgk.demo.performance.TestActivity
-import com.dgk.demo.rxjava.RxJavaActivity
-import com.dgk.demo.service.Service01
-import com.dgk.demo.service.ServiceActivity
 import kotlinx.android.synthetic.main.demo_activity_demo.*
 
 @Route(path = "/demo/DemoActivity")
@@ -18,16 +14,22 @@ class DemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.demo_activity_demo)
 
+        setSupportActionBar(toolbar)
+
         btn_rxjava.setOnClickListener {
-            startActivity(Intent(this@DemoActivity, RxJavaActivity::class.java))
+            ARouter.getInstance().build("/demo/rxjava/RxJavaActivity").navigation()
         }
 
         btn_test.setOnClickListener {
-            startActivity(Intent(this@DemoActivity, TestActivity::class.java))
+            ARouter.getInstance().build("/demo/performance/NetworkActivity").navigation()
         }
 
         btn_service.setOnClickListener {
-            startActivity(Intent(this@DemoActivity, ServiceActivity::class.java))
+            ARouter.getInstance().build("/demo/service/ServiceActivity").navigation()
+        }
+
+        btn_design.setOnClickListener{
+            ARouter.getInstance().build("/demo/design/DesignActivity").navigation()
         }
     }
 }

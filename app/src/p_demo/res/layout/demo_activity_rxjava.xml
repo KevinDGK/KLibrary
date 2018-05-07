@@ -15,10 +15,11 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
+            app:title="RxJava"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:titleTextColor="@color/common_white"
-            app:layout_scrollFlags="scroll|enterAlways"/>
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:titleTextColor="@color/common_white" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -33,103 +34,163 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btn_test_demo"
-                android:layout_width="200dp"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Demo"
+                android:layout_margin="16dp"
+                android:text="基本流程:\n1.创建被观察者对象Observable用于发射数据流\n2.使用操作符加工数据流\n3.使用线程调度器Scheduler指定操作数据流所在的线程\n4.创建观察者对象Observer接收数据流" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="关键类" />
+
+            <Button
+                android:id="@+id/btn_test_observable"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="Observable - Observer 不支持背压"
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/btn_test_exception"
-                android:layout_width="200dp"
+                android:id="@+id/btn_test_single"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="异常"
+                android:text="Single - SingleObserver 仅发送单个事件"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_test_flowable"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="Flowable - Subscriber 支持背压"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="操作符" />
+
+            <Button
+                android:id="@+id/btn_test_create"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="create 创建"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_concat"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="concat"
+                android:text="concat 连接发射器，依次执行，可中断"
                 android:textAllCaps="false" />
 
 
             <Button
                 android:id="@+id/btn_test_zip"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="zip"
+                android:text="zip 合并发射器，一起发射"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_map"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="map"
+                android:text="map 数据变换"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_flatmap"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="flatMap"
+                android:text="flatMap 展开数据流"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_concatmap"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:text="concatMap"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_interval"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="interval"
+                android:text="interval 间隔，定时任务"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_distinct"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="distinct"
+                android:text="distinct 去重"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_filter"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="filter"
+                android:text="filter 过滤器"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_buffer"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="buffer"
+                android:text="buffer 缓存区,每次发射count个,步长skip"
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn_test_do_on_next"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="doOnNext"
+                android:text="doOnNext 在onNext之前执行"
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/btn_test_03"
-                android:layout_width="200dp"
+                android:id="@+id/btn_test_just"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="03"
+                android:text="just 简单发射器"
+                android:textAllCaps="false" />
+
+
+            <Button
+                android:id="@+id/btn_test_exception"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="异常机制"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="使用场景" />
+
+            <Button
+                android:id="@+id/btn_use_01"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="简单网络请求"
                 android:textAllCaps="false" />
 
             <Button
-                android:id="@+id/btn_test_04"
-                android:layout_width="200dp"
+                android:id="@+id/btn_use_02"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="04"
+                android:text="定时任务/轮询"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_use_03"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="先从缓存获取数据，若没有则请求网络"
                 android:textAllCaps="false" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

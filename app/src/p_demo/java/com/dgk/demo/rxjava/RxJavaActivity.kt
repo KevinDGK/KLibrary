@@ -2,13 +2,14 @@ package com.dgk.demo.rxjava
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.fastjson.JSON
 import com.dgk.R
 import com.dgk.common.util.KLogi
 import com.dgk.common.util.printThrowable
 import com.dgk.common.util.startTaskRecorder
 import com.dgk.common.util.stopTaskRecorder
-import com.dgk.demo.okhttp.OkHttpUtil
+import com.dgk.demo.http.OkHttpUtil
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -22,8 +23,9 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.functions.*
 import io.reactivex.functions.Function
+import org.reactivestreams.Subscriber
+import org.reactivestreams.Subscription
 import java.util.concurrent.TimeUnit
-
 
 /**
  * RxJava
@@ -42,7 +44,10 @@ import java.util.concurrent.TimeUnit
  *
  * Created by daigaokai on 2018/4/16.
  */
+@Route(path = "/demo/rxjava/RxJavaActivity")
 class RxJavaActivity : AppCompatActivity() {
+
+    private data class ResponseBean(var code:Int = -1, var message : String = "")
 
     /**
      * 在界面关闭、获取数据成功、或者达到一定次数和时间之后就需要取消轮询，否则界面关闭后线程仍然在执行，容易造成崩溃。
@@ -54,12 +59,24 @@ class RxJavaActivity : AppCompatActivity() {
         setContentView(R.layout.demo_activity_rxjava)
 
         // 将布局中的ToolBar替换系统的Toolbar
-        toolbar.title = "RxJava"
         setSupportActionBar(toolbar)
 
-        btn_test_demo.setOnClickListener {
-            rxJavaTestDemo()
+        btn_test_observable.setOnClickListener {
+            rxJavaTestObservableAndObserver()
         }
+
+        btn_test_single.setOnClickListener {
+            rxJavaTestSingle()
+        }
+
+        btn_test_flowable.setOnClickListener {
+            rxJavaTestFlowable()
+        }
+
+        btn_test_create.setOnClickListener {
+            rxJavaTestCreate()
+        }
+
         btn_test_exception.setOnClickListener {
             rxJavaTestException()
         }
@@ -103,6 +120,10 @@ class RxJavaActivity : AppCompatActivity() {
             rxJavaTestDoOnNext()
         }
 
+        btn_test_just.setOnClickListener {
+            rxJavaTestJust()
+        }
+
         // 设置RxJava全局的ErrorHandler，来接收Rxjava中onXXX()抛出的未捕捉的异常，详见RxJavaPlugins.onError()方法。
         RxJavaPlugins.setErrorHandler(object : Consumer<Throwable> {
             override fun accept(t: Throwable?) {
@@ -131,10 +152,10 @@ class RxJavaActivity : AppCompatActivity() {
      * 基本使用
      * 第一步：创建被观察者Observable
      * 第二步：创建观察者Observer
-     * 第三部：建立订阅关系
+     * 第三步：建立订阅关系
      */
-    private fun rxJavaTestDemo() {
-        KLogi("====== rxJavaTestDemo ======")
+    private fun rxJavaTestObservableAndObserver() {
+        KLogi("====== rxJavaTestObservableAndObserver ======")
 
         var disposable: Disposable? = null
 
@@ -180,6 +201,104 @@ class RxJavaActivity : AppCompatActivity() {
             override fun onError(e: Throwable) {
                 KLogi("onError")
                 e.printStackTrace()
+            }
+        })
+    }
+
+    /**
+     * Single
+     * - 仅发射单个数据的被观察者和观察者模式。
+     * 和Observable／Observer基本相同，唯一区别是没有onComplete事件。
+     */
+    private fun rxJavaTestSingle() {
+
+        KLogi(this, "rxJavaTestSingle")
+
+        Single.create(object : SingleOnSubscribe<Int>{
+            override fun subscribe(emitter: SingleEmitter<Int>) {
+                // 由于仅发射一个数据(事件)，所以只会调用onSuccess或者onError，没有onComplete和onNext。
+                emitter.onSuccess(1)
+//                emitter.onError()
+            }
+        }).subscribe(object : SingleObserver<Int>{
+            override fun onSuccess(t: Int) {
+                KLogi("onSuccess: $t")
+            }
+
+            override fun onSubscribe(d: Disposable) {
+            }
+
+            override fun onError(e: Throwable) {
+            }
+        })
+
+    }
+
+    /**
+     * Flowable/Subscriber
+     * - 背压，详细可以参考文章 https://www.jianshu.com/p/ff8167c1d191
+     */
+    private fun rxJavaTestFlowable() {
+
+        KLogi(this, "rxJavaTestFlowable")
+
+        Flowable.create(object : FlowableOnSubscribe<Int>{
+            override fun subscribe(emitter: FlowableEmitter<Int>) {
+                emitter.onNext(1)
+                emitter.onNext(2)
+                emitter.onComplete()
+            }
+        }, BackpressureStrategy.BUFFER)
+                .subscribe(object : Subscriber<Int> {
+                    override fun onComplete() {
+                        KLogi("onComplete")
+                    }
+
+                    override fun onSubscribe(s: Subscription?) {
+                        s?.request(Long.MAX_VALUE)
+                    }
+
+                    override fun onNext(t: Int?) {
+                        KLogi("onNext: $t")
+                    }
+
+                    override fun onError(t: Throwable?) {
+                        t?.printStackTrace()
+                    }
+                })
+
+    }
+
+    /**
+     * create 创建
+     */
+    private fun rxJavaTestCreate() {
+
+        KLogi(this, "rxJavaTestCreate")
+
+        Observable.create(object : ObservableOnSubscribe<Int>{
+            override fun subscribe(emitter: ObservableEmitter<Int>) {
+                emitter.onNext(1)
+                emitter.onNext(2)
+                emitter.onNext(3)
+                emitter.onComplete()
+            }
+        }).subscribe(object : Observer<Int> {
+            override fun onSubscribe(d: Disposable) {
+                // 订阅
+            }
+
+            override fun onNext(t: Int) {
+                // 接收数据流-发射的事件
+                KLogi("onNext: $t")
+            }
+
+            override fun onError(e: Throwable) {
+                // 接收异常
+            }
+
+            override fun onComplete() {
+                // 结束
             }
         })
     }
@@ -764,5 +883,22 @@ class RxJavaActivity : AppCompatActivity() {
                     KLogi("accept: $it")
                 }
 
+    }
+
+    /**
+     * Just 简单使用
+     */
+    private fun rxJavaTestJust() {
+
+        KLogi(this, "rxJavaTestJust")
+
+        Observable.just(1,2,3,4,5)
+                .skip(1)    // 跳过前count个
+                .take(3)    // 最多接收count个
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    KLogi("onNext: $it")
+                }
     }
 }

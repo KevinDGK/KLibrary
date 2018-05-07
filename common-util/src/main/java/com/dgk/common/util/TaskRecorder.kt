@@ -94,6 +94,7 @@ fun stopTaskRecorder(cls: Any?, taskName: String) {
     if (realTaskName in cacheMap) {
         val stopTime = System.currentTimeMillis()
         val startTime = cacheMap[realTaskName]?.startTime ?: (stopTime + 1)
+        cacheMap.remove(realTaskName)
         KLogi("$realTaskName|结束|耗时:${stopTime - startTime}ms")
     } else {
         KLoge("警告|$realTaskName 不在任务缓存器中!")
