@@ -123,7 +123,7 @@ object OkHttpUtil {
             // 文件请求体
             val fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), it)
             // 添加文件，文件为必须的；将文件保存到name为files的表单数据中，在服务端接口中files参数对应的是一个File[]
-            builder.addFormDataPart("files", it.name, fileBody)
+            builder.addFormDataPart("files", it.name, fileBody) // 这里的name是接口中文件列表的参数名
         }
 
         // 添加参数，参数为非必需的

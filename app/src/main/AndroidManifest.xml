@@ -24,24 +24,20 @@
         <activity android:name=".demo.DemoActivity" />
         <activity android:name=".demo.rxjava.RxJavaActivity" />
         <activity android:name=".demo.performance.NetworkActivity" />
-
         <activity android:name=".demo.service.ServiceActivity" />
+
         <service android:name=".demo.service.Service01" />
 
         <activity android:name=".demo.design.DesignActivity" />
         <activity android:name=".demo.design.component.BottomSheetActivity" />
         <activity android:name=".demo.design.component.ButtonActivity" />
-
+        <activity android:name=".demo.design.component.CardActivity"/>
 
 
         <!-- Imitation子模块 -->
         <activity android:name=".imitation.ImitationActivity" />
 
-
         <!-- Note子模块 -->
-
-
-
 
     </application>
 

@@ -3,9 +3,12 @@ package com.dgk.demo.design
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.widget.Button
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.dgk.R
 import com.dgk.demo.design.component.BottomSheetActivity
+import com.dgk.demo.design.component.ButtonActivity
+import com.dgk.demo.design.component.CardActivity
 import kotlinx.android.synthetic.main.demo_activity_design.*
 
 /**
@@ -22,6 +25,14 @@ class DesignActivity : AppCompatActivity(){
 
         btn_bottom_sheet.setOnClickListener {
             startActivity(Intent(this@DesignActivity, BottomSheetActivity::class.java))
+        }
+
+        btn_button.setOnClickListener {
+            startActivity(Intent(this@DesignActivity, ButtonActivity::class.java))
+        }
+
+        btn_card.setOnClickListener {
+            startActivity(Intent(this@DesignActivity, CardActivity::class.java))
         }
     }
 }

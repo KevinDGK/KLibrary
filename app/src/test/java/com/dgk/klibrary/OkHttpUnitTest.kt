@@ -64,7 +64,7 @@ class OkHttpUnitTest {
         println("testOkHttpUploadFile")
 
 //        val url = "http://10.30.3.174:8080/mydemo/test/upload"
-        val url = "http://localhost:8080/mydemo/uploadFileList"
+        val url = "http://101.200.162.199:9080/MyDemo/uploadFileList"
 
         val file1 = File("1.txt")
         file1.writeText("1234567890")
