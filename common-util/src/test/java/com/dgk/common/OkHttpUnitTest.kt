@@ -16,21 +16,24 @@ import java.io.IOException
  */
 class OkHttpUnitTest {
 
+    val SERVER_URL_MINGQING = "http://101.200.162.199:9080/MyDemo/"   // 明钦阿里云服务器
+    val SERVER_URL_LOCAL = "http://10.30.3.174:8080/mydemo/"  // 本地
+    val SERVER_URL = SERVER_URL_MINGQING
 
     @Test
     fun testOkHttp() {
 
-        val action = "get"
+        val url = SERVER_URL + "get"
 
-        OkHttpUtil.getSync(action = action, params = null)
+        OkHttpUtil.getSync(url, null)
 
         val params = HashMap<String, String>()
         params["name"] = "dgk"
         params["password"] = "123456"
 
-        OkHttpUtil.getSync(action = action, params = params)
+        OkHttpUtil.getSync(url, params)
 
-        OkHttpUtil.getAsync(action = action, params = params, callback = object : Callback {
+        OkHttpUtil.getAsync(url,  params, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 println("onFailure: $e")
             }
@@ -46,7 +49,7 @@ class OkHttpUnitTest {
 
         println("testOkHttpUploadFile")
 
-        val action = "uploadFile"
+        val url = SERVER_URL + "uploadFile"
 
         val file = File("123.txt")
         file.writeText("1234567890")
@@ -58,7 +61,7 @@ class OkHttpUnitTest {
         params.put("mcode", mcode)
         params.put("en", en)
 
-        OkHttpUtil.uploadFileSync(action = action, file = file, params = params)
+        OkHttpUtil.uploadFileSync(url, file, params)
     }
 
     @Test
@@ -66,7 +69,7 @@ class OkHttpUnitTest {
 
         println("testOkHttpUploadFile")
 
-        val action = "uploadFileList"
+        val url = SERVER_URL + "uploadFileList"
 
         val file1 = File("1.txt")
         file1.writeText("1234567890")
@@ -81,6 +84,6 @@ class OkHttpUnitTest {
         params.put("mcode", mcode)
         params.put("en", en)
 
-        OkHttpUtil.uploadFileListSync(action = action, fileList = listOf(file1,file2), params = params)
+        OkHttpUtil.uploadFileListSync(url, listOf(file1,file2), params)
     }
 }

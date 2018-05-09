@@ -13,18 +13,20 @@ import java.io.File
  */
 object OkHttpUtil {
 
-    private var client: OkHttpClient = OkHttpClient()
+    private lateinit var client: OkHttpClient
 
     /**
-     * 服务器地址，在初始化该工具类的时候设置进来
+     * 初始化
      */
-    var SERVER_URL = ""
+    fun init(client: OkHttpClient) {
+        this.client = client
+    }
 
     /**
      * Get请求(同步)
      */
-    fun getSync(serverUrl: String = SERVER_URL, action: String = "", params: Map<String, String>?= null): String {
-        val request = buildGetRequest(serverUrl, action, params)
+    fun getSync(serverUrl: String = "", params: Map<String, String>?= null): String {
+        val request = buildGetRequest(serverUrl, params)
         // 发送同步请求
         val response = client.newCall(request).execute()
         val responseBody = response.body()?.string() ?: "null"
@@ -36,8 +38,8 @@ object OkHttpUtil {
     /**
      * Get请求(异步)
      */
-    fun getAsync(serverUrl: String = SERVER_URL, action: String = "", params: Map<String, String>? = null, callback: Callback) {
-        val request = buildGetRequest(serverUrl, action, params)
+    fun getAsync(serverUrl: String, params: Map<String, String>? = null, callback: Callback) {
+        val request = buildGetRequest(serverUrl, params)
         // 发送异步请求
         client.newCall(request).enqueue(callback)
     }
@@ -45,10 +47,10 @@ object OkHttpUtil {
     /**
      * 构建Get请求的Request
      */
-    private fun buildGetRequest(serverUrl: String, action: String, params: Map<String, String>?): Request {
+    private fun buildGetRequest(serverUrl: String, params: Map<String, String>?): Request {
         // 拼接GET请求的URL
         val url = StringBuilder()
-        url.append("$serverUrl$action")
+        url.append(serverUrl)
         if (params != null && params.isNotEmpty()) {
             url.append("?")
             params.forEach { k, v ->
@@ -68,8 +70,8 @@ object OkHttpUtil {
     /**
      * Post请求(同步)
      */
-    fun postSync(serverUrl: String = SERVER_URL, action: String, params: Map<String, String>?= null): String {
-        val request = buildPostRequest(params, serverUrl, action)
+    fun postSync(serverUrl: String, params: Map<String, String>?= null): String {
+        val request = buildPostRequest(params, serverUrl)
         // 发送同步请求
         val response = client.newCall(request).execute()
         val responseBody = response.body()?.string() ?: "null"
@@ -81,8 +83,8 @@ object OkHttpUtil {
     /**
      * Post请求(异步)
      */
-    fun postAsync(serverUrl: String = SERVER_URL, action: String, params: Map<String, String>?= null, callback: Callback) {
-        val request = buildPostRequest(params, serverUrl, action)
+    fun postAsync(serverUrl: String, params: Map<String, String>?= null, callback: Callback) {
+        val request = buildPostRequest(params, serverUrl)
         // 发送异步请求
         client.newCall(request).enqueue(callback)
     }
@@ -90,7 +92,7 @@ object OkHttpUtil {
     /**
      * 构建POST请求的Request
      */
-    private fun buildPostRequest(params: Map<String, String>?, serverUrl: String, action: String): Request {
+    private fun buildPostRequest(params: Map<String, String>?, serverUrl: String): Request {
         // 构建表单请求参数体
         val builder = FormBody.Builder()
         // 添加参数，参数为非必需的
@@ -107,7 +109,7 @@ object OkHttpUtil {
 
         // 构建请求对象
         val request = Request.Builder()
-                .url(serverUrl + action)
+                .url(serverUrl)
                 .post(builder.build())
                 .build()
         printRequest(request, params)
@@ -117,8 +119,8 @@ object OkHttpUtil {
     /**
      * 上传单个文件(同步)
      */
-    fun uploadFileSync(serverUrl: String = SERVER_URL, action: String, file: File, params: Map<String, String>?= null): String {
-        val request = buildPostFileRequest(file, params, serverUrl, action)
+    fun uploadFileSync(serverUrl: String, file: File, params: Map<String, String>?= null): String {
+        val request = buildPostFileRequest(file, params, serverUrl)
         // 发送同步请求
         val response = client.newCall(request).execute()
         val responseBody = response.body()?.string() ?: "null"
@@ -130,8 +132,8 @@ object OkHttpUtil {
     /**
      * 上传单个文件(异步)
      */
-    fun uploadFileASync(serverUrl: String = SERVER_URL, action: String, file: File, params: Map<String, String>?= null, callback: Callback) {
-        val request = buildPostFileRequest(file, params, serverUrl, action)
+    fun uploadFileASync(serverUrl: String, file: File, params: Map<String, String>?= null, callback: Callback) {
+        val request = buildPostFileRequest(file, params, serverUrl)
         // 发送异步请求
         client.newCall(request).enqueue(callback)
     }
@@ -139,7 +141,7 @@ object OkHttpUtil {
     /**
      * 构建POST请求的单文件上传的Request
      */
-    private fun buildPostFileRequest(file: File, params: Map<String, String>?, serverUrl: String, action: String): Request {
+    private fun buildPostFileRequest(file: File, params: Map<String, String>?, serverUrl: String): Request {
         // 构建请求参数体: 参数+文件
         val builder = MultipartBody.Builder().setType(MultipartBody.ALTERNATIVE)
 
@@ -153,7 +155,7 @@ object OkHttpUtil {
 
         // 构建请求对象
         val request = Request.Builder()
-                .url(serverUrl + action)
+                .url(serverUrl)
                 .post(builder.build())
                 .build()
         printRequest(request, params)
@@ -163,8 +165,8 @@ object OkHttpUtil {
     /**
      * 上传多个文件(同步)
      */
-    fun uploadFileListSync(serverUrl: String = SERVER_URL, action: String, fileList: List<File>, params: Map<String, String>?= null): String {
-        val request = buildPostFilesRequest(fileList, params, serverUrl, action)
+    fun uploadFileListSync(serverUrl: String, fileList: List<File>, params: Map<String, String>?= null): String {
+        val request = buildPostFilesRequest(fileList, params, serverUrl)
         // 发送同步请求
         val response = client.newCall(request).execute()
         val responseBody = response.body()?.string() ?: "null"
@@ -176,8 +178,8 @@ object OkHttpUtil {
     /**
      * 上传多个文件(异步)
      */
-    fun uploadFileListASync(serverUrl: String = SERVER_URL, action: String, fileList: List<File>, params: Map<String, String>?= null, callback: Callback) {
-        val request = buildPostFilesRequest(fileList, params, serverUrl, action)
+    fun uploadFileListASync(serverUrl: String, fileList: List<File>, params: Map<String, String>?= null, callback: Callback) {
+        val request = buildPostFilesRequest(fileList, params, serverUrl)
         // 发送异步请求
         client.newCall(request).enqueue(callback)
     }
@@ -185,7 +187,7 @@ object OkHttpUtil {
     /**
      * 构建POST请求的多文件上传的Request
      */
-    private fun buildPostFilesRequest(fileList: List<File>, params: Map<String, String>?, serverUrl: String, action: String): Request {
+    private fun buildPostFilesRequest(fileList: List<File>, params: Map<String, String>?, serverUrl: String): Request {
         // 构建请求参数体: 参数+文件
         val builder = MultipartBody.Builder().setType(MultipartBody.ALTERNATIVE)
 
@@ -201,7 +203,7 @@ object OkHttpUtil {
 
         // 构建请求对象
         val request = Request.Builder()
-                .url(serverUrl + action)
+                .url(serverUrl)
                 .post(builder.build())
                 .build()
         printRequest(request, params)

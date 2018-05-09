@@ -8,6 +8,8 @@ import com.dgk.common.util.http.OkHttpUtil
 import com.dgk.common.util.log.KLog
 import com.dgk.common.util.startTaskRecorder
 import com.dgk.common.util.stopTaskRecorder
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by daigaokai on 2018/4/23.
@@ -17,7 +19,7 @@ class KApplication : MultiDexApplication() {
     companion object {
         var application: KApplication? = null
 
-        fun getCtx() : Application{
+        fun getCtx(): Application {
             return application!!
         }
     }
@@ -49,20 +51,24 @@ class KApplication : MultiDexApplication() {
      * 初始化网络模块
      */
     private fun initHttp() {
-        startTaskRecorder(this,"初始化网络模块")
-        OkHttpUtil.SERVER_URL = CONFIG_SERVER_URL
-        stopTaskRecorder(this,"初始化网络模块")
+        startTaskRecorder(this, "初始化网络模块")
+        OkHttpUtil.init(OkHttpClient.Builder()
+                .connectTimeout(30000, TimeUnit.MILLISECONDS)
+                .readTimeout(60000, TimeUnit.MILLISECONDS)
+                .writeTimeout(60000, TimeUnit.MILLISECONDS)
+                .build())
+        stopTaskRecorder(this, "初始化网络模块")
     }
 
     /**
      * 初始化ARouter
      */
     private fun initARouter() {
-        startTaskRecorder(this,"初始化ARouter")
+        startTaskRecorder(this, "初始化ARouter")
         ARouter.openDebug()
         ARouter.openLog()
         ARouter.init(this)
-        stopTaskRecorder(this,"初始化ARouter")
+        stopTaskRecorder(this, "初始化ARouter")
     }
 
     /**
@@ -70,8 +76,8 @@ class KApplication : MultiDexApplication() {
      * - 日志模块为KLog，内部使用的是XLog
      */
     private fun initLog() {
-        startTaskRecorder(this,"初始化日志模块")
+        startTaskRecorder(this, "初始化日志模块")
         KLog.init(this, BuildConfig.DEBUG)
-        stopTaskRecorder(this,"初始化日志模块")
+        stopTaskRecorder(this, "初始化日志模块")
     }
 }

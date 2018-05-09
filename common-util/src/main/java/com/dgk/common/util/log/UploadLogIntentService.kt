@@ -22,8 +22,8 @@ class UploadLogIntentService : IntentService(UploadLogIntentService::class.java.
          * @param context 上下文
          * @param date yyyyMMdd 需要上传哪天的日志文件，格式为yyyyMMdd
          */
-        fun launch(context: Context, date: String) {
-            launch(context, arrayListOf(date))
+        fun launch(context: Context, date: String, serverUrl: String) {
+            launch(context, arrayListOf(date), serverUrl)
         }
 
         /**
@@ -31,13 +31,19 @@ class UploadLogIntentService : IntentService(UploadLogIntentService::class.java.
          * @param context 上下文
          * @param dateList 需要上传哪些天的日志文件，格式为yyyyMMdd
          */
-        fun launch(context: Context, dateList: ArrayList<String>) {
-            KLogi(this, "launch: dateList=$dateList")
+        fun launch(context: Context, dateList: ArrayList<String>, serverUrl: String) {
+            KLogi(this, "launch: dateList=$dateList, serverUrl=$serverUrl")
             val intent = Intent(context, UploadLogIntentService::class.java)
             intent.putStringArrayListExtra("dateList", dateList)
+            intent.putExtra("serverUrl", serverUrl)
             context.startService(intent)
         }
     }
+
+    // 文件服务器地址
+    var serverUrl = ""
+    // 指定上传哪天的日志
+    var dateList : java.util.ArrayList<String>? = null
 
     override fun onHandleIntent(intent: Intent?) {
 
@@ -46,21 +52,22 @@ class UploadLogIntentService : IntentService(UploadLogIntentService::class.java.
         // 在上传日志之前主动触发一次将缓存中的日志写入文件
         KLog.flush(true)
 
-        val dateList = intent.getStringArrayListExtra("dateList")
+        dateList = intent.getStringArrayListExtra("dateList")
+        serverUrl = intent.getStringExtra("serverUrl")
 
-        if (dateList != null && dateList.isNotEmpty()) {
-            checkFile(dateList)
+        if (dateList != null && dateList!!.isNotEmpty()) {
+            checkFile()
         }
     }
 
     /**
      * 检查文件
      */
-    private fun checkFile(dateList: java.util.ArrayList<String>) {
+    private fun checkFile() {
 
         val fileList = mutableListOf<File>()
 
-        dateList.forEach {
+        dateList?.forEach {
             val file = isFileExist(it)
             if (file != null) {
                 fileList.add(file)
@@ -116,9 +123,9 @@ class UploadLogIntentService : IntentService(UploadLogIntentService::class.java.
         }
 
         if (fileList.size == 1) {
-            OkHttpUtil.uploadFileASync(action = "uploadFile", file = fileList[0], params = params, callback = callback)
+            OkHttpUtil.uploadFileASync(serverUrl,fileList[0], params, callback)
         } else if (fileList.size > 1) {
-            OkHttpUtil.uploadFileListASync(action = "uploadFileList", fileList = fileList, params = params, callback = callback)
+            OkHttpUtil.uploadFileListASync(serverUrl, fileList, params, callback)
         }
     }
 

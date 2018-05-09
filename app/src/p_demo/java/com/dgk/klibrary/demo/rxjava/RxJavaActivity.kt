@@ -10,6 +10,7 @@ import com.dgk.common.util.printThrowable
 import com.dgk.common.util.startTaskRecorder
 import com.dgk.common.util.stopTaskRecorder
 import com.dgk.common.util.http.OkHttpUtil
+import com.dgk.klibrary.main.app.CONFIG_SERVER_URL
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -555,9 +556,7 @@ class RxJavaActivity : AppCompatActivity() {
             override fun subscribe(emitter: ObservableEmitter<String>) {
                 KLogi("Observable: subscribe, 进行网络请求")
 
-                val URL_GET = "get"
-
-                OkHttpUtil.getAsync(action = URL_GET, callback = object : Callback {
+                OkHttpUtil.getAsync(CONFIG_SERVER_URL + "get", null, object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         KLogi("onFailure: $e")
                         emitter.onError(Exception("onFailure: ${e?.message ?: "null"}"))
@@ -708,9 +707,7 @@ class RxJavaActivity : AppCompatActivity() {
             override fun subscribe(emitter: ObservableEmitter<String>) {
                 KLogi("Observable: subscribe, 进行网络请求")
 
-                val URL_GET = "get"
-
-                OkHttpUtil.getAsync(action = URL_GET, callback = object : Callback {
+                OkHttpUtil.getAsync(CONFIG_SERVER_URL + "get", null, object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         KLogi("onFailure: $e")
                         emitter.onError(Exception("onFailure: ${e?.message ?: "null"}"))
