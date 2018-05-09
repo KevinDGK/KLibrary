@@ -70,4 +70,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // 网络请求-OkGo
+    api 'com.squareup.okhttp3:okhttp:3.10.0'
+    api 'com.lzy.net:okgo:3.0.4'
+    // 数据解析-FastJson
+    api 'com.alibaba:fastjson:1.1.68.android'
+    // 日志上传
+    api 'com.tencent.mars:mars-xlog:1.0.6'
 }

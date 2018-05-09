@@ -1,2 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dgk.common.util" />
+    package="com.dgk.common.util">
+
+    <application>
+
+        <!-- 日志上传服务 -->
+        <service android:name=".log.UploadLogIntentService" />
+
+    </application>
+</manifest>

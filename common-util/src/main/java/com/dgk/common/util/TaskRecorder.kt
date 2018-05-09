@@ -2,6 +2,9 @@
 
 package com.dgk.common.util
 
+import com.dgk.common.util.log.KLoge
+import com.dgk.common.util.log.KLogi
+
 /**
  * 任务日志工具类
  * - 记录任务执行的日志

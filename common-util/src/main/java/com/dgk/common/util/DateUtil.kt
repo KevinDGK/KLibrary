@@ -17,7 +17,7 @@ const val DATE_PATTERN_DEFAULT = DATE_PATTERN_01
  * @param time 时间戳
  * @param pattern 日期格式，默认为DATE_PATTERN_DEFAULT
  */
-fun format(time: Long = System.currentTimeMillis(), pattern: String = DATE_PATTERN_DEFAULT): String
+fun getFormatDate(time: Long = System.currentTimeMillis(), pattern: String = DATE_PATTERN_DEFAULT): String
         = SimpleDateFormat(pattern, Locale.getDefault()).format(time)
 
 
