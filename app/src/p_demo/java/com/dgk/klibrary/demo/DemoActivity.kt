@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.dgk.R
+import com.dgk.klibrary.demo.view.DialogActivity
 import kotlinx.android.synthetic.main.demo_activity_demo.*
 
 @Route(path = "/demo/DemoActivity")
@@ -31,6 +32,10 @@ class DemoActivity : AppCompatActivity() {
 
         btn_design.setOnClickListener{
             ARouter.getInstance().build("/demo/design/DesignActivity").navigation()
+        }
+
+        btn_dialog.setOnClickListener{
+            startActivity(Intent(this@DemoActivity, DialogActivity::class.java))
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.dgk.common.util
 
-import android.app.Application
+import android.content.Context
 import android.view.Gravity
 import android.widget.Toast
 
@@ -11,9 +11,9 @@ object ToastManager {
 
     private var toast: Toast? = null
 
-    fun toast(ctx: Application, content: String) {
+    fun toast(ctx: Context, content: String) {
         if (toast == null) {
-            toast = Toast.makeText(ctx, content, Toast.LENGTH_SHORT)
+            toast = Toast.makeText(ctx.applicationContext, content, Toast.LENGTH_SHORT)
         }
         // 注意：小米手机如果直接Toast.makeText(ctx)，那么显示的内容包为：应用名称:content，再执行一遍setText()就不会显示应用名称了
         toast?.setText(content)

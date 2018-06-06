@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     tools:context=".klibrary.demo.DemoActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -14,8 +15,8 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:layout_height="?android:actionBarSize"
+            android:background="@color/colorPrimary"
             app:title="Demo"
             app:titleTextColor="@color/common_white"
             app:layout_scrollFlags="scroll|enterAlways"/>
@@ -23,29 +24,36 @@
 
     <Button
         android:id="@+id/btn_rxjava"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="RxJava"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btn_design"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="Material Design"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_test"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_service"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Test"
+        android:text="Service"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_service"
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_dialog"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="Service"
+        android:text="Dialog"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Test"
         android:textAllCaps="false" />
 </LinearLayout>

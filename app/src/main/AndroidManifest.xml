@@ -29,6 +29,7 @@
         <activity android:name="com.dgk.klibrary.demo.rxjava.RxJavaActivity" />
         <activity android:name="com.dgk.klibrary.demo.performance.NetworkActivity" />
         <activity android:name="com.dgk.klibrary.demo.service.ServiceActivity" />
+        <activity android:name="com.dgk.klibrary.demo.view.DialogActivity" />
 
         <service android:name="com.dgk.klibrary.demo.service.Service01" />
 

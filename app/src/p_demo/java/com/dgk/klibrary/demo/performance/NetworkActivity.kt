@@ -32,6 +32,8 @@ class NetworkActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.demo_activity_network)
 
+
+
 //        disposables = Disposables()
 
         // 开始统计手机消耗的流量

@@ -1,6 +1,9 @@
 package com.dgk.klibrary.demo.rxjava
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.fastjson.JSON
@@ -45,7 +48,7 @@ import java.util.concurrent.TimeUnit
 @Route(path = "/demo/rxjava/RxJavaActivity")
 class RxJavaActivity : AppCompatActivity() {
 
-    private data class ResponseBean(var code:Int = -1, var message : String = "")
+    private data class ResponseBean(var code: Int = -1, var message: String = "")
 
     /**
      * 在界面关闭、获取数据成功、或者达到一定次数和时间之后就需要取消轮询，否则界面关闭后线程仍然在执行，容易造成崩溃。
@@ -135,6 +138,20 @@ class RxJavaActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
 
+//        /*
+//            当界面关闭的时候，一定要将一些耗时较长、轮询等被观察者取消订阅，
+//            否则，当界面关闭后，有可能还在发射事件，并走到了观察者的onNext()方法中，
+//            容易造成崩溃或者内存泄漏。
+//        */
+//        disposable?.let {
+//            it.dispose()
+//            stopTaskRecorder(this, "rxJavaTestInterval")
+//        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
         /*
             当界面关闭的时候，一定要将一些耗时较长、轮询等被观察者取消订阅，
             否则，当界面关闭后，有可能还在发射事件，并走到了观察者的onNext()方法中，
@@ -212,7 +229,7 @@ class RxJavaActivity : AppCompatActivity() {
 
         KLogi(this, "rxJavaTestSingle")
 
-        Single.create(object : SingleOnSubscribe<Int>{
+        Single.create(object : SingleOnSubscribe<Int> {
             override fun subscribe(emitter: SingleEmitter<Int>) {
                 // 由于仅发射一个数据(事件)，所以只会调用onSuccess或者onError，没有onComplete和onNext。
                 emitter.onSuccess(1)
@@ -240,7 +257,7 @@ class RxJavaActivity : AppCompatActivity() {
 
         KLogi(this, "rxJavaTestFlowable")
 
-        Flowable.create(object : FlowableOnSubscribe<Int>{
+        Flowable.create(object : FlowableOnSubscribe<Int> {
             override fun subscribe(emitter: FlowableEmitter<Int>) {
                 emitter.onNext(1)
                 emitter.onNext(2)
@@ -274,7 +291,7 @@ class RxJavaActivity : AppCompatActivity() {
 
         KLogi(this, "rxJavaTestCreate")
 
-        Observable.create(object : ObservableOnSubscribe<Int>{
+        Observable.create(object : ObservableOnSubscribe<Int> {
             override fun subscribe(emitter: ObservableEmitter<Int>) {
                 emitter.onNext(1)
                 emitter.onNext(2)
@@ -733,12 +750,12 @@ class RxJavaActivity : AppCompatActivity() {
             - timeUnit: 时间单位
          */
         Observable.interval(0, 2, TimeUnit.SECONDS)
-                .flatMap(object : Function<Long, ObservableSource<String>> {
-                    override fun apply(t: Long): ObservableSource<String> {
-                        KLogi("apply, t=$t")
-                        return getDataFromServer
-                    }
-                }).subscribeOn(Schedulers.io())
+        .flatMap(object : Function<Long, ObservableSource<String>> {
+            override fun apply(t: Long): ObservableSource<String> {
+                KLogi("apply, t=$t")
+                return getDataFromServer
+            }
+        }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : Observer<String> {
                     override fun onComplete() {
@@ -763,6 +780,7 @@ class RxJavaActivity : AppCompatActivity() {
                         e.printStackTrace()
                     }
                 })
+
     }
 
     /**
@@ -869,7 +887,8 @@ class RxJavaActivity : AppCompatActivity() {
                 .map {
                     it + 1      // 0->1，并将新的数据返回，向下游传递
                 }
-                .doOnNext { // 该函数并没有返回值，而且it是常量
+                .doOnNext {
+                    // 该函数并没有返回值，而且it是常量
                     it + 1
                     KLogi("doOnNext: $it")
                 }
@@ -886,7 +905,7 @@ class RxJavaActivity : AppCompatActivity() {
 
         KLogi(this, "rxJavaTestJust")
 
-        Observable.just(1,2,3,4,5)
+        Observable.just(1, 2, 3, 4, 5)
                 .skip(1)    // 跳过前count个
                 .take(3)    // 最多接收count个
                 .subscribeOn(Schedulers.io())

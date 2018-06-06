@@ -16,8 +16,8 @@ import java.io.IOException
  */
 class OkHttpUnitTest {
 
-    val SERVER_URL_MINGQING = "http://101.200.162.199:9080/MyDemo/"   // 明钦阿里云服务器
-    val SERVER_URL_LOCAL = "http://10.30.3.174:8080/mydemo/"  // 本地
+    val SERVER_URL_MINGQING = "http://101.200.162.199:9080/klibrary/"   // 明钦阿里云服务器
+    val SERVER_URL_LOCAL = "http://10.30.3.174:8080/klibrary/"  // 本地
     val SERVER_URL = SERVER_URL_MINGQING
 
     @Test
@@ -85,5 +85,22 @@ class OkHttpUnitTest {
         params.put("en", en)
 
         OkHttpUtil.uploadFileListSync(url, listOf(file1,file2), params)
+    }
+
+    @Test
+    fun testPCUploadFile() {
+
+        println("testPCUploadFile")
+
+        val url = "http://testfork.weipass.cn/cashier3-console/log/upload"
+
+        val file = File("log_dgk_20180522000000001.txt")
+        file.writeText("1234567890")
+
+        val macAddress = "AB_AB_AB_AB_AB_AB_AB_AB"
+        val params = HashMap<String, String>()
+        params.put("macAddress", macAddress)
+
+        OkHttpUtil.uploadFileSync(url, file, params)
     }
 }

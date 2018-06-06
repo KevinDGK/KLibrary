@@ -41,9 +41,9 @@ class UploadLogIntentService : IntentService(UploadLogIntentService::class.java.
     }
 
     // 文件服务器地址
-    var serverUrl = ""
+    private var serverUrl = ""
     // 指定上传哪天的日志
-    var dateList : java.util.ArrayList<String>? = null
+    private var dateList : java.util.ArrayList<String>? = null
 
     override fun onHandleIntent(intent: Intent?) {
 

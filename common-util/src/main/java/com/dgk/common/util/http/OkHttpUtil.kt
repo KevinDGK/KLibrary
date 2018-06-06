@@ -148,7 +148,7 @@ object OkHttpUtil {
         // 文件请求体
         val fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file)
         // 添加文件，文件为必须的
-        builder.addFormDataPart("file", file.name, fileBody)
+        builder.addFormDataPart("logFile", file.name, fileBody)
 
         // 添加参数，参数为非必需的
         params?.forEach { k, v -> builder.addFormDataPart(k, v) }

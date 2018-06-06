@@ -71,9 +71,14 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    // 网络请求-OkGo
+    // 网络请求模块
+    // OkHttp
     api 'com.squareup.okhttp3:okhttp:3.10.0'
+    // okGo: 一个基于okhttp的标准RESTful风格的网络框架,支持Rxjava2、上传下载管理、自定义缓存等
     api 'com.lzy.net:okgo:3.0.4'
+    // Retrofit：基于OkHttp
+    api 'com.squareup.retrofit2:retrofit:2.4.0'
+
     // 数据解析-FastJson
     api 'com.alibaba:fastjson:1.1.68.android'
     // 日志上传
