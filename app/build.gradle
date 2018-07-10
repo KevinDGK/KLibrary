@@ -26,7 +26,8 @@ android {
                 - 用到b.so库时：运行在armeabi手机上会使用armeabi的b.so，运行在armeabi-v7a手机上会抛出运行时异常java.lang.UnsatisfiedLinkError；
                 所以说，如果指定了cpu类型，则必须每个第三方库都要提供指定类型的.so库
              */
-            abiFilters 'armeabi'    // 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64','mips', 'mips64'
+            abiFilters 'armeabi'
+            // 'armeabi-v7a', 'armeabi-v8a', 'x86', 'x86_64','mips', 'mips64'
         }
 
         // ARouter

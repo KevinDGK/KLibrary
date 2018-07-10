@@ -13,7 +13,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.demo_activity_test.*
+import kotlinx.android.synthetic.main.demo_activity_network.*
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 

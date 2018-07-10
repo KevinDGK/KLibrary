@@ -45,7 +45,6 @@ import java.util.concurrent.TimeUnit
  *
  * Created by daigaokai on 2018/4/16.
  */
-@Route(path = "/demo/rxjava/RxJavaActivity")
 class RxJavaActivity : AppCompatActivity() {
 
     private data class ResponseBean(var code: Int = -1, var message: String = "")

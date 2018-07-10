@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dgk">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="com.dgk.klibrary.main.app.KApplication"
+        android:name=".klibrary.main.app.KApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
 
         <!-- Main子模块 -->
-        <activity android:name="com.dgk.klibrary.main.MainActivity">
+        <activity android:name=".klibrary.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,26 +24,33 @@
         </activity>
 
         <!-- Demo子模块 -->
-        <activity android:name="com.dgk.klibrary.demo.DemoActivity" />
-        <activity android:name="com.dgk.klibrary.demo.TestActivity" />
-        <activity android:name="com.dgk.klibrary.demo.rxjava.RxJavaActivity" />
-        <activity android:name="com.dgk.klibrary.demo.performance.NetworkActivity" />
-        <activity android:name="com.dgk.klibrary.demo.service.ServiceActivity" />
-        <activity android:name="com.dgk.klibrary.demo.view.DialogActivity" />
+        <activity android:name=".klibrary.demo.DemoActivity" />
+        <activity android:name=".klibrary.demo.TestActivity" />
+        <activity android:name=".klibrary.demo.rxjava.RxJavaActivity" />
+        <activity android:name=".klibrary.demo.performance.NetworkActivity" />
+        <activity android:name=".klibrary.demo.service.ServiceActivity" />
+        <activity android:name=".klibrary.demo.view.DialogActivity" />
 
-        <service android:name="com.dgk.klibrary.demo.service.Service01" />
+        <service android:name=".klibrary.demo.service.Service01" />
 
-        <activity android:name="com.dgk.klibrary.demo.design.DesignActivity" />
-        <activity android:name="com.dgk.klibrary.demo.design.component.BottomSheetActivity" />
-        <activity android:name="com.dgk.klibrary.demo.design.component.ButtonActivity" />
-        <activity android:name="com.dgk.klibrary.demo.design.component.CardActivity"/>
+        <activity android:name=".klibrary.demo.design.DesignActivity" />
+        <activity android:name=".klibrary.demo.design.component.BottomSheetActivity" />
+        <activity android:name=".klibrary.demo.design.component.ButtonActivity" />
+        <activity android:name=".klibrary.demo.design.component.CardActivity" />
+        <activity android:name=".klibrary.demo.other.TimerActivity" />
 
+        <receiver android:name=".klibrary.demo.other.TimerActivity$TimerBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.dgk.Timer" />
+            </intent-filter>
+        </receiver>
 
         <!-- Imitation子模块 -->
-        <activity android:name="com.dgk.klibrary.imitation.ImitationActivity" />
+        <activity android:name=".klibrary.imitation.ImitationActivity" />
 
         <!-- Note子模块 -->
 
+        <activity android:name=".klibrary.demo.rxjava.RxBus1Activity"></activity>
     </application>
 
 </manifest>

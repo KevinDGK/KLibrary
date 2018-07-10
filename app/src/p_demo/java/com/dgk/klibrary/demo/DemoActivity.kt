@@ -6,6 +6,9 @@ import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.dgk.R
+import com.dgk.klibrary.demo.other.TimerActivity
+import com.dgk.klibrary.demo.rxjava.RxBus1Activity
+import com.dgk.klibrary.demo.rxjava.RxJavaActivity
 import com.dgk.klibrary.demo.view.DialogActivity
 import kotlinx.android.synthetic.main.demo_activity_demo.*
 
@@ -19,7 +22,11 @@ class DemoActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         btn_rxjava.setOnClickListener {
-            ARouter.getInstance().build("/demo/rxjava/RxJavaActivity").navigation()
+            startActivity(Intent(this@DemoActivity, RxJavaActivity::class.java))
+        }
+
+        btn_rxbus.setOnClickListener {
+            startActivity(Intent(this@DemoActivity, RxBus1Activity::class.java))
         }
 
         btn_test.setOnClickListener {
@@ -36,6 +43,10 @@ class DemoActivity : AppCompatActivity() {
 
         btn_dialog.setOnClickListener{
             startActivity(Intent(this@DemoActivity, DialogActivity::class.java))
+        }
+
+        btn_timer.setOnClickListener {
+            startActivity(Intent(this@DemoActivity, TimerActivity::class.java))
         }
     }
 }

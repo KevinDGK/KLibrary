@@ -6,5 +6,10 @@
         <!-- 日志上传服务 -->
         <service android:name=".log.UploadLogIntentService" />
 
+        <receiver android:name=".timer.TimerBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.dgk.common.util.Timer"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

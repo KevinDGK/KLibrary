@@ -12,8 +12,16 @@ object ToastManager {
     private var toast: Toast? = null
 
     fun toast(ctx: Context, content: String) {
+        startToast(ctx, content, Toast.LENGTH_SHORT)
+    }
+
+    fun toastLong(ctx: Context, content: String) {
+        startToast(ctx, content, Toast.LENGTH_LONG)
+    }
+
+    private fun startToast(ctx: Context, content: String, duration: Int) {
         if (toast == null) {
-            toast = Toast.makeText(ctx.applicationContext, content, Toast.LENGTH_SHORT)
+            toast = Toast.makeText(ctx.applicationContext, content, duration)
         }
         // 注意：小米手机如果直接Toast.makeText(ctx)，那么显示的内容包为：应用名称:content，再执行一遍setText()就不会显示应用名称了
         toast?.setText(content)
