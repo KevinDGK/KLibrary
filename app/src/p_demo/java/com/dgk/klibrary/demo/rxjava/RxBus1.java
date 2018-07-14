@@ -7,7 +7,8 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 /**
- * 简单的RxBus实例
+ * 简单的RxBus
+ * - 基于RxJava实现的事件总线，用于不同对象(组件)之间进行通信。
  */
 public class RxBus1 {
 
@@ -27,9 +28,15 @@ public class RxBus1 {
         private static RxBus1 rxBus1 = new RxBus1();
     }
 
+    /**
+     * 同时代表了一个观察者和一个被观察者，允许将单个源的多播事件传递给多个子观察者。
+     */
     private Subject<Object> mSubject;
 
     private RxBus1() {
+        /*
+            创建一个PublishSubject实例，并且将其方法转变为线程安全的。
+         */
         mSubject = PublishSubject.create().toSerialized();
     }
 

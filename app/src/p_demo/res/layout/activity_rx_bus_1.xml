@@ -30,10 +30,17 @@
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_send"
-        android:layout_width="100dp"
+        android:id="@+id/btn_send_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send Event"
+        android:text="Send TextChangeEvent"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btn_send_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send BackgroundEvent"
         android:textAllCaps="false" />
 
 </LinearLayout>
